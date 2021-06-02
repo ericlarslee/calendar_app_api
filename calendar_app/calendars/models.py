@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
+from django.contrib.auth.models import BaseUserManager, AbstractBaseUser, PermissionsMixin
 
 # Create your models here
 
@@ -28,7 +28,7 @@ class UserManager(BaseUserManager):
         return user
 
 
-class User(AbstractBaseUser):
+class User(AbstractBaseUser, PermissionsMixin):
 
     email = models.EmailField(
         verbose_name='email address',
@@ -60,27 +60,39 @@ class UserProfile(models.Model):
         db_table = "profile"
 
 
+# class Date(models.Model):
+#     date = models.DateField
+#     summary = models.CharField(max_length=100, null=True, default=None)
+#     user = models.ForeignKey(UserProfile, on_delete=models.CASCADE, null=False, default=None)
+#
+#     def __str__(self):
+#         return self.date
+#
+#
 class Event(models.Model):
-    name = models.CharField
-    date = models.DateField
-    description = models.TextField
+    name = models.CharField(max_length=100, null=True, default=None)
+    date = models.DateField(editable=True)
+    description = models.TextField(max_length=100, null=True, default=None)
+    user = models.ForeignKey(UserProfile, on_delete=models.CASCADE, null=False, default=None)
 
     def __str__(self):
         return self.name
 
 
-class Date(models.Model):
-    date = models.DateField
-    event = models.ManyToManyField(Event)
-    summary = models.CharField
+class Summary(models.Model):
+    body = models.TextField(max_length=1000, null=True, default=None)
+    date = models.DateField(editable=True)
+    user = models.ForeignKey(UserProfile, on_delete=models.CASCADE, null=False, default=None)
 
     def __str__(self):
-        return self.date
+        return self.body
 
 
-class Calendar(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    dates = models.ManyToManyField(Date)
-
-    def __str__(self):
-        return self.user
+#
+# class Calendar(models.Model):
+#     user = models.OneToOneField(User, on_delete=models.CASCADE)
+#     dates = models.ManyToManyField(Date)
+#
+#     def __str__(self):
+#         return self.user
+#

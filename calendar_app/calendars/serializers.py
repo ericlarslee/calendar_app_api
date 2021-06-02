@@ -1,20 +1,20 @@
 from rest_framework import serializers
-from .models import Calendar, Event, User, UserProfile
+from .models import Event, User, UserProfile, Summary
 from rest_framework_jwt.settings import api_settings
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import update_last_login
 
 
-class CalendarSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Calendar
-        fields = ['id', 'user', 'dates']
-
-
 class EventSerializer(serializers.ModelSerializer):
     class Meta:
         model = Event
-        fields = ['name', 'date', 'description']
+        fields = ['name', 'date', 'description', 'user']
+
+
+class SummarySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Summary
+        fields = ['body', 'date', 'user']
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -73,5 +73,3 @@ class UserLoginSerializer(serializers.Serializer):
             'email': user.email,
             'token': jwt_token
         }
-
-

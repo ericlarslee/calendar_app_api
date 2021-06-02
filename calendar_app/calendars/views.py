@@ -1,8 +1,8 @@
 from rest_framework import viewsets, status
 from rest_framework.generics import RetrieveAPIView
 from rest_framework.permissions import AllowAny
-from .models import Calendar, Event
-from .serializers import CalendarSerializer, EventSerializer, UserRegistrationSerializer, UserLoginSerializer
+from .models import Event, Summary
+from .serializers import EventSerializer, UserRegistrationSerializer, UserLoginSerializer, SummarySerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -12,14 +12,68 @@ from .models import UserProfile
 # Create your views here.
 
 
-class CalendarView(viewsets.ModelViewSet):
-    queryset = Calendar.objects.all()
-    serializer_class = CalendarSerializer
+class EventView(viewsets.ModelViewSet):
 
-
-class ItemView(viewsets.ModelViewSet):
+    permission_classes = (IsAuthenticated,)
+    authentication_class = JSONWebTokenAuthentication
     queryset = Event.objects.all()
     serializer_class = EventSerializer
+
+    def get_user_events(self, request):
+        try:
+            user = request.user
+            date = request.date
+            user_events = Event.objects.all.filter(user=user).filter(date=date)
+            status_code = status.HTTP_200_OK
+            response = {
+                'success': 'true',
+                'status code': status_code,
+                'message': 'User events fetched successfully',
+                'data': [{
+                    'events': user_events
+                }]
+            }
+        except Exception as e:
+            status_code = status.HTTP_400_BAD_REQUEST
+            response = {
+                'success': 'false',
+                'status code': status.HTTP_400_BAD_REQUEST,
+                'message': 'Events do not exists',
+                'error': str(e)
+                }
+        return Response(response, status=status_code)
+
+
+class SummaryView(viewsets.ModelViewSet):
+
+    permission_classes = (IsAuthenticated,)
+    authentication_class = JSONWebTokenAuthentication
+    queryset = Summary.objects.all()
+    serializer_class = SummarySerializer
+
+    def get_user_summarys(self, request):
+        try:
+            user = request.user
+            date = request.date
+            user_summarys = Summary.objects.all.filter(user=user).filter(date=date)
+            status_code = status.HTTP_200_OK
+            response = {
+                'success': 'true',
+                'status code': status_code,
+                'message': 'User summary fetched successfully',
+                'data': [{
+                    'events': user_summarys
+                }]
+            }
+        except Exception as e:
+            status_code = status.HTTP_400_BAD_REQUEST
+            response = {
+                'success': 'false',
+                'status code': status.HTTP_400_BAD_REQUEST,
+                'message': 'Summary does not exists',
+                'error': str(e)
+                }
+        return Response(response, status=status_code)
 
 
 class UserRegistrationView(APIView):
