@@ -60,15 +60,6 @@ class UserProfile(models.Model):
         db_table = "profile"
 
 
-# class Date(models.Model):
-#     date = models.DateField
-#     summary = models.CharField(max_length=100, null=True, default=None)
-#     user = models.ForeignKey(UserProfile, on_delete=models.CASCADE, null=False, default=None)
-#
-#     def __str__(self):
-#         return self.date
-#
-#
 class Event(models.Model):
     name = models.CharField(max_length=100, null=True, default=None)
     date = models.DateField(editable=True)
@@ -87,12 +78,3 @@ class Summary(models.Model):
     def __str__(self):
         return self.body
 
-
-#
-# class Calendar(models.Model):
-#     user = models.OneToOneField(User, on_delete=models.CASCADE)
-#     dates = models.ManyToManyField(Date)
-#
-#     def __str__(self):
-#         return self.user
-#

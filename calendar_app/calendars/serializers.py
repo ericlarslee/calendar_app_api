@@ -20,7 +20,7 @@ class SummarySerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserProfile
-        fields = ['first_name', 'last_name', 'address']
+        fields = ['first_name', 'last_name', 'address', 'user_id']
 
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
@@ -36,7 +36,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         profile_data = validated_data.pop('profile')
         user = User.objects.create_user(**validated_data)
         UserProfile.objects.create(
-            user=user,
+            user_id=user.id,
             first_name=profile_data['first_name'],
             last_name=profile_data['last_name'],
             address=profile_data['address'],

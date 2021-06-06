@@ -51,29 +51,33 @@ class SummaryView(viewsets.ModelViewSet):
     queryset = Summary.objects.all()
     serializer_class = SummarySerializer
 
-    def get_user_summarys(self, request):
-        try:
-            user = request.user
-            date = request.date
-            user_summarys = Summary.objects.all.filter(user=user).filter(date=date)
-            status_code = status.HTTP_200_OK
-            response = {
-                'success': 'true',
-                'status code': status_code,
-                'message': 'User summary fetched successfully',
-                'data': [{
-                    'events': user_summarys
-                }]
-            }
-        except Exception as e:
-            status_code = status.HTTP_400_BAD_REQUEST
-            response = {
-                'success': 'false',
-                'status code': status.HTTP_400_BAD_REQUEST,
-                'message': 'Summary does not exists',
-                'error': str(e)
-                }
-        return Response(response, status=status_code)
+    def get_queryset(self):
+        user = self.request.user
+        return Summary.user
+
+    # def get(self, request):
+    #     try:
+    #         user = request.user
+    #         date = request.date
+    #         user_summarys = Summary.objects.all.filter(user=user).filter(date=date)
+    #         status_code = status.HTTP_200_OK
+    #         response = {
+    #             'success': 'true',
+    #             'status code': status_code,
+    #             'message': 'User summary fetched successfully',
+    #             'data': [{
+    #                 'summarys': user_summarys
+    #             }]
+    #         }
+    #     except Exception as e:
+    #         status_code = status.HTTP_400_BAD_REQUEST
+    #         response = {
+    #             'success': 'false',
+    #             'status code': status.HTTP_400_BAD_REQUEST,
+    #             'message': 'Summary does not exists',
+    #             'error': str(e)
+    #             }
+    #     return Response(response, status=status_code)
 
 
 class UserRegistrationView(APIView):
