@@ -10,6 +10,7 @@ router.register('summarys', views.SummaryView)
 
 urlpatterns = [
     path('', include(router.urls)),
+    # router.register(r'summarys/(?<')
     url(r'^signup', views.UserRegistrationView.as_view(), name='signup'),
     url(r'^signin', views.UserLoginView.as_view(), name='signin'),
     url(r'^profile', views.UserProfileView.as_view()),
