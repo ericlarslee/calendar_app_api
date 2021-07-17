@@ -60,11 +60,15 @@ class UserProfile(models.Model):
         db_table = "profile"
 
 
+class Date(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=False, default=None)
+    date = models.DateField(editable=True)
+
+
 class Event(models.Model):
     name = models.CharField(max_length=100, null=True, default=None)
-    date = models.DateField(editable=True)
     description = models.TextField(max_length=100, null=True, default=None)
-    user = models.ForeignKey(UserProfile, on_delete=models.CASCADE, null=False, default=None)
+    date = models.ManyToManyField('Date', related_name='events', blank=True)
 
     def __str__(self):
         return self.name
@@ -72,9 +76,9 @@ class Event(models.Model):
 
 class Summary(models.Model):
     body = models.TextField(max_length=1000, null=True, default=None)
-    date = models.DateField(editable=True)
-    user = models.ForeignKey(UserProfile, on_delete=models.CASCADE, null=False, default=None)
+    date = models.ManyToManyField('Date', related_name='summarys', blank=True)
 
     def __str__(self):
         return self.body
+
 

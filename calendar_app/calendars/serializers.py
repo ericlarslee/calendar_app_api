@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Event, User, UserProfile, Summary
+from .models import Event, User, UserProfile, Summary, Date
 from rest_framework_jwt.settings import api_settings
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import update_last_login
@@ -8,19 +8,30 @@ from django.contrib.auth.models import update_last_login
 class EventSerializer(serializers.ModelSerializer):
     class Meta:
         model = Event
-        fields = ['name', 'date', 'description', 'user']
+        fields = ('id', 'name', 'date', 'description')
 
 
 class SummarySerializer(serializers.ModelSerializer):
     class Meta:
         model = Summary
-        fields = ['body', 'date', 'user']
+        fields = ('id', 'body', 'date')
+
+
+class DateSerializer(serializers.ModelSerializer):
+    events = EventSerializer(many=True, read_only=True)
+    summarys = SummarySerializer(many=True, read_only=True)
+
+    class Meta:
+        ordering = ['-id']
+        model = Date
+        fields = ('user', 'date', 'summarys', 'events')
+        extra_kwargs = {'summarys': {'required': False}, 'events': {'required': False}}
 
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserProfile
-        fields = ['first_name', 'last_name', 'address', 'user_id']
+        fields = ('id', 'first_name', 'last_name', 'address')
 
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
@@ -29,7 +40,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['email', 'password', 'profile', 'user_id']
+        fields = ('email', 'password', 'profile')
         extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):

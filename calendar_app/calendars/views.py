@@ -1,8 +1,8 @@
 from rest_framework import viewsets, status
 from rest_framework.generics import RetrieveAPIView
 from rest_framework.permissions import AllowAny
-from .models import Event, Summary
-from .serializers import EventSerializer, UserRegistrationSerializer, UserLoginSerializer, SummarySerializer
+from .models import Event, Summary, Date
+from .serializers import EventSerializer, UserRegistrationSerializer, UserLoginSerializer, SummarySerializer, DateSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -13,32 +13,33 @@ from .models import UserProfile
 # Create your views here.
 
 
-class EventView(viewsets.ModelViewSet):
+class EventViewSet(viewsets.ModelViewSet):
 
     permission_classes = (IsAuthenticated,)
     authentication_class = JSONWebTokenAuthentication
     queryset = Event.objects.all()
     serializer_class = EventSerializer
-    filter_fields = ('user', 'date')
+    filter_fields = 'date'
 
 
-# class SummaryFilter(filters.Filterset):
-#     date = filters.DateFilter('date', lookup_expr='iexact')
-#     user = filters.CharFilter('user', lookup_expr='iexact')
-#
-#     class Meta:
-#         model = Summary
-#         fields = ('user', 'date')
-#
-
-class SummaryView(viewsets.ModelViewSet):
+class SummaryViewSet(viewsets.ModelViewSet):
 
     permission_classes = (IsAuthenticated,)
     authentication_class = JSONWebTokenAuthentication
     serializer_class = SummarySerializer
     queryset = Summary.objects.all()
-    filter_fields = ('user', 'date')
+    filter_fields = 'date'
 
+
+
+class DateViewSet(viewsets.ModelViewSet):
+    """
+    List all dates, or create a new date.
+    """
+    permission_classes = (IsAuthenticated,)
+    authentication_class = JSONWebTokenAuthentication
+    serializer_class = DateSerializer
+    queryset = Date.objects.all()
 
 
 class UserRegistrationView(APIView):
